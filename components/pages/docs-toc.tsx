@@ -1,5 +1,10 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { PenLine, Clock } from 'lucide-react';
+import { getGitHubEditUrl, getRelatedLinks, formatLastUpdated, getLastUpdatedDate } from '@/lib/github-utils';
 
 interface TOCItem {
   id: string;
@@ -12,7 +17,20 @@ interface DocsTOCProps {
 }
 
 export const DocsTOC: React.FC<DocsTOCProps> = ({ items, footerHeight = 0 }) => {
+  const pathname = usePathname();
   const [activeId, setActiveId] = useState<string>('');
+  const [lastUpdated, setLastUpdated] = useState<string>('');
+
+  const githubUrl = pathname ? getGitHubEditUrl(pathname) : '#';
+  const relatedLinks = pathname ? getRelatedLinks(pathname) : [];
+
+  useEffect(() => {
+    // Get last updated date from metadata or fallback
+    if (pathname) {
+      const updateTime = getLastUpdatedDate(pathname);
+      setLastUpdated(formatLastUpdated(updateTime));
+    }
+  }, [pathname]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -86,23 +104,40 @@ export const DocsTOC: React.FC<DocsTOCProps> = ({ items, footerHeight = 0 }) => 
           </div>
 
           <div className="pt-6 border-t border-white/5 space-y-3">
-            <a href="#" className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            <a 
+              href={githubUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            >
               <PenLine className="w-3.5 h-3.5" />
               Edit on GitHub
             </a>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Clock className="w-3.5 h-3.5" />
-              Last updated 2 days ago
-            </div>
+            {lastUpdated && (
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                <Clock className="w-3.5 h-3.5" />
+                Last updated {lastUpdated}
+              </div>
+            )}
           </div>
 
-          <div className="pt-6">
-            <h5 className="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-3">Related</h5>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-xs text-slate-400 hover:text-indigo-400 transition-colors">Config Reference</a></li>
-              <li><a href="#" className="text-xs text-slate-400 hover:text-indigo-400 transition-colors">Environment Variables</a></li>
-            </ul>
-          </div>
+          {relatedLinks.length > 0 && (
+            <div className="pt-6">
+              <h5 className="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-3">Related</h5>
+              <ul className="space-y-2">
+                {relatedLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link 
+                      href={link.href} 
+                      className="text-xs text-slate-400 hover:text-indigo-400 transition-colors"
+                    >
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </aside>
