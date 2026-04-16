@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hyperkit Docs
 
-## Getting Started
+Official documentation site for Hyperkit products and protocols.
 
-First, run the development server:
+## Current scope
+
+This repository powers `docs.hyperkitlabs.com` and should reflect the current product truth set.
+
+The current documentation baseline for `v0.2.0` is:
+
+1. HyperAgent is the primary workflow product surface.
+2. The active product scope is narrower than the long-term architecture roadmap.
+3. Product pages should distinguish:
+   - current supported workflow path
+   - documented implementation scope
+   - architecture direction
+4. Legacy wording should be treated carefully and rewritten where it overstates current support.
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Update process
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+For major docs updates:
 
-## Learn More
+1. audit current claims against the product repos
+2. classify claims as:
+   - implemented
+   - partial
+   - roadmap
+3. update top-level pages first
+4. then update subpages and references
+5. run lint before merge
 
-To learn more about Next.js, take a look at the following resources:
+## Current priority
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The current priority is a `v0.2.0` docs truth-set pass focused on:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. homepage
+2. HyperAgent overview
+3. HyperAgent getting started
+4. HyperAgent concepts
+5. HyperAgent API overview
+6. SDK overview
+7. ERC-1066 and x402 overview
 
-## Deploy on Vercel
+## Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This repo previously contained broad product marketing language that no longer matched the active product path. The current direction is to make the docs read like a serious product documentation site with implementation honesty.
