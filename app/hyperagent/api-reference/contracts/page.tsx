@@ -1,22 +1,20 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
-import { CodeBlock } from '@/components/pages/docs-codeblock';
+import { Callout } from '@/components/pages/docs-callout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ContractsAPIPage() {
   const tocItems = [
     { id: 'overview', label: 'Overview' },
-    { id: 'generate-contract', label: 'Generate Contract' },
-    { id: 'audit-contract', label: 'Audit Contract' }
+    { id: 'current-surface', label: 'Current Surface' },
+    { id: 'output-boundary', label: 'Output Boundary' }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
@@ -24,7 +22,7 @@ export default function ContractsAPIPage() {
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-8 font-medium">
             <Link href="/" className="hover:text-slate-300 transition-colors">Docs</Link>
             <span>/</span>
-            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">Hyperagent</Link>
+            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">HyperAgent</Link>
             <span>/</span>
             <Link href="/hyperagent/api-reference" className="hover:text-slate-300 transition-colors">API Reference</Link>
             <span>/</span>
@@ -33,52 +31,26 @@ export default function ContractsAPIPage() {
 
           <h1 className="text-4xl font-medium tracking-tight text-white mb-6">Contracts API</h1>
           <p className="text-lg text-slate-400 leading-relaxed mb-8">
-            Generate and audit smart contracts using the REST API.
+            This section describes the contract-facing workflow surface of HyperAgent. The current scope should be read as generated artifact and verification output within a workflow system, not as a blanket claim that every generated contract is launch-complete or fully audited.
           </p>
 
-          <h2 id="generate-contract" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
-            Generate Contract
+          <Callout type="warning" title="Current Scope">
+            HyperAgent should be understood as producing workflow outputs and generated artifacts that are reviewable, verifiable, and deployment-aware. It should not be read here as a zero-touch contract factory with final release guarantees.
+          </Callout>
+
+          <h2 id="current-surface" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Current Surface
           </h2>
-          <p className="leading-7 mb-4">
-            Generate a contract from natural language description:
+          <p className="leading-7 mb-6">
+            The contract-facing API belongs inside the broader workflow system. Generation, audit, simulation, and deploy preparation are connected stages. That means contract outputs should be interpreted together with workflow state, verification outputs, and release gates rather than as isolated code artifacts.
           </p>
 
-          <CodeBlock
-            language="bash"
-            code={`<span class="text-blue-400">POST</span> /api/v1/contracts/generate
-
-<span class="text-slate-500">Request Body:</span>
-{
-  <span class="text-green-400">"nlp_description"</span>: <span class="text-green-400">"Create an ERC20 token"</span>,
-  <span class="text-green-400">"contract_type"</span>: <span class="text-green-400">"token"</span>
-}
-
-<span class="text-slate-500">Response:</span>
-{
-  <span class="text-green-400">"contract_code"</span>: <span class="text-green-400">"pragma solidity ^0.8.0; ..."</span>,
-  <span class="text-green-400">"contract_id"</span>: <span class="text-green-400">"uuid"</span>
-}`}
-          />
-
-          <h2 id="audit-contract" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
-            Audit Contract
+          <h2 id="output-boundary" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Output Boundary
           </h2>
-          <CodeBlock
-            language="bash"
-            code={`<span class="text-blue-400">POST</span> /api/v1/contracts/audit
-
-<span class="text-slate-500">Request Body:</span>
-{
-  <span class="text-green-400">"contract_code"</span>: <span class="text-green-400">"pragma solidity ^0.8.0; ..."</span>
-}
-
-<span class="text-slate-500">Response:</span>
-{
-  <span class="text-green-400">"vulnerabilities"</span>: [...],
-  <span class="text-green-400">"overall_risk_score"</span>: <span class="text-blue-400">25</span>,
-  <span class="text-green-400">"audit_status"</span>: <span class="text-green-400">"passed"</span>
-}`}
-          />
+          <p className="leading-7 mb-6">
+            A generated contract output is part of a deployment-aware starter result. It is expected to be reviewed, extended, and hardened by a team before final launch. The current docs should therefore emphasize generated artifacts, verification context, and handoff quality instead of implying fully finished or final audited contract output.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-white/5">
             <Link href="/hyperagent/api-reference" className="group block p-4 rounded-xl border border-white/10 hover:border-amber-500/30 hover:bg-white/5 transition-all">
@@ -102,4 +74,3 @@ export default function ContractsAPIPage() {
     </div>
   );
 }
-
