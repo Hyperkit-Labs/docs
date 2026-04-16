@@ -1,19 +1,20 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
+import { Callout } from '@/components/pages/docs-callout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MultiChainDeploymentPage() {
   const tocItems = [
-    { id: 'overview', label: 'Overview' }
+    { id: 'overview', label: 'Overview' },
+    { id: 'current-scope', label: 'Current Scope' },
+    { id: 'future-direction', label: 'Future Direction' }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
@@ -21,16 +22,34 @@ export default function MultiChainDeploymentPage() {
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-8 font-medium">
             <Link href="/" className="hover:text-slate-300 transition-colors">Docs</Link>
             <span>/</span>
-            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">Hyperagent</Link>
+            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">HyperAgent</Link>
             <span>/</span>
             <Link href="/hyperagent/guides" className="hover:text-slate-300 transition-colors">Guides</Link>
             <span>/</span>
-            <span className="text-amber-400">Multi-Chain Deployment</span>
+            <span className="text-amber-400">Deployment Scope</span>
           </div>
 
-          <h1 className="text-4xl font-medium tracking-tight text-white mb-6">Multi-Chain Deployment</h1>
+          <h1 className="text-4xl font-medium tracking-tight text-white mb-6">Deployment Scope</h1>
           <p className="text-lg text-slate-400 leading-relaxed mb-8">
-            Deploy contracts across multiple blockchain networks with Hyperagent.
+            This page explains how to read deployment support in the current docs. The repository architecture is broader than the currently release-blocking path, so deployment claims must be interpreted through current supported scope rather than through roadmap ambition alone.
+          </p>
+
+          <h2 id="current-scope" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Current Scope
+          </h2>
+          <p className="leading-7 mb-6">
+            The current product and repository materials indicate that Phase 1 narrows to one primary end-to-end path before broader chain expansion. That means deployment support should be read as a constrained current lane plus a modular multi-chain roadmap, not as universal parity across every listed chain.
+          </p>
+
+          <Callout type="info" title="Reading the Current Docs Safely">
+            If a page still implies broad multi-chain deployment support as a present-tense capability, treat that as a documentation lag unless the page has been updated to the current truth set.
+          </Callout>
+
+          <h2 id="future-direction" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Future Direction
+          </h2>
+          <p className="leading-7 mb-6">
+            Broader chain adapters remain part of the architecture direction and longer-term platform design. They should be added to the public truth set only after the narrower MVP lane is stable, observable, and proven against the release criteria used in the control plane and hardening roadmap.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-white/5">
@@ -55,4 +74,3 @@ export default function MultiChainDeploymentPage() {
     </div>
   );
 }
-
