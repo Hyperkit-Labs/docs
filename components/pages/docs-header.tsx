@@ -8,17 +8,21 @@ import {
   Search,
   ChevronDown,
   Github,
-  Sun,
-  Moon,
   Menu,
   X,
   Rocket,
   Bot,
   FileText,
   ChevronRight,
+  Twitter,
+  MessagesSquare,
+  BookOpen,
+  Globe,
+  Link as LinkIcon,
+  Share2,
 } from 'lucide-react';
-import { useTheme } from '@/components/providers/theme-provider';
 import { useDocsArchive } from '@/components/providers/docs-archive-provider';
+import { DOCS_SOCIAL_LINKS } from '@/lib/social-links';
 import { DocsSearchModal } from '@/components/pages/docs-search-modal';
 import { formatVersion } from '@/lib/version';
 import { DOCS_NAV_GROUPS, getAllDocsNavSections } from '@/lib/docs-nav';
@@ -29,6 +33,14 @@ const iconMap = {
   rocket: Rocket,
   bot: Bot,
   file: FileText,
+} as const;
+
+const socialIconMap = {
+  discord: MessagesSquare,
+  x: Twitter,
+  link3: LinkIcon,
+  medium: BookOpen,
+  website: Globe,
 } as const;
 
 function MobileNavPanel({
@@ -182,10 +194,10 @@ function MobileNavPanel({
 
 export const DocsHeader: React.FC = () => {
   const pathname = usePathname();
-  const { docsPathname, docHref, archivePrefix } = useDocsArchive();
-  const { theme, toggleTheme } = useTheme();
+   const { docsPathname, docHref, archivePrefix } = useDocsArchive();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVersionOpen, setIsVersionOpen] = useState(false);
+  const [isSocialOpen, setIsSocialOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const currentVersion = formatVersion();
 
@@ -210,9 +222,13 @@ export const DocsHeader: React.FC = () => {
         e.preventDefault();
         setIsSearchOpen(true);
       }
-      if (e.key === 'Escape' && isSearchOpen) {
+      if (e.key !== 'Escape') return;
+      if (isSearchOpen) {
         setIsSearchOpen(false);
+        return;
       }
+      setIsVersionOpen(false);
+      setIsSocialOpen(false);
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -220,18 +236,21 @@ export const DocsHeader: React.FC = () => {
   }, [isSearchOpen]);
 
   useEffect(() => {
+    if (!isVersionOpen && !isSocialOpen) return;
+
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target.closest('.version-dropdown')) {
         setIsVersionOpen(false);
       }
+      if (!target.closest('.social-dropdown')) {
+        setIsSocialOpen(false);
+      }
     };
 
-    if (isVersionOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [isVersionOpen]);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isVersionOpen, isSocialOpen]);
 
   return (
     <>
@@ -334,7 +353,10 @@ export const DocsHeader: React.FC = () => {
             <div className="hidden sm:flex items-center relative version-dropdown">
               <button
                 type="button"
-                onClick={() => setIsVersionOpen(!isVersionOpen)}
+                onClick={() => {
+                  setIsSocialOpen(false);
+                  setIsVersionOpen((v) => !v);
+                }}
                 className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 px-2.5 py-1.5 rounded border border-white/5 hover:border-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
                 aria-expanded={isVersionOpen}
                 aria-haspopup="listbox"
@@ -402,14 +424,51 @@ export const DocsHeader: React.FC = () => {
             >
               <Github className="w-4 h-4" />
             </a>
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="text-slate-400 hover:text-white transition-colors p-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
-              aria-label="Toggle color theme"
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
+
+            <div className="relative flex items-center social-dropdown">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsVersionOpen(false);
+                  setIsSocialOpen((v) => !v);
+                }}
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 px-2.5 py-1.5 rounded border border-white/5 hover:border-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
+                aria-expanded={isSocialOpen}
+                aria-haspopup="menu"
+                aria-label="Community and social links"
+              >
+                <Share2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="hidden sm:inline">Community</span>
+                <ChevronDown
+                  className={`w-3 h-3 text-slate-500 transition-transform shrink-0 ${isSocialOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              {isSocialOpen ? (
+                <div
+                  className="absolute top-full mt-1 right-0 bg-[#0B0C15] border border-white/10 rounded-md shadow-lg min-w-[13.5rem] py-1 z-50"
+                  role="menu"
+                  aria-label="Social links"
+                >
+                  {DOCS_SOCIAL_LINKS.map((item) => {
+                    const Icon = socialIconMap[item.icon];
+                    return (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        role="menuitem"
+                        onClick={() => setIsSocialOpen(false)}
+                        className="flex items-center gap-2.5 w-full text-left px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500/60"
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0 text-slate-400" aria-hidden />
+                        <span className="min-w-0">{item.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </header>
