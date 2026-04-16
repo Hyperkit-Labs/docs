@@ -32,30 +32,6 @@ export function getRelatedLinks(pathname: string): Array<{ title: string; href: 
       { title: 'Security Auditing', href: '/hyperagent/concepts/auditing' },
       { title: 'Deployment', href: '/hyperagent/concepts/deployment' },
     ],
-    '/sdk': [
-      { title: 'Getting Started', href: '/sdk/getting-started' },
-      { title: 'Components', href: '/sdk/components' },
-      { title: 'Hooks', href: '/sdk/hooks' },
-    ],
-    '/sdk/components': [
-      { title: 'Connect Wallet', href: '/sdk/components/connect-wallet' },
-      { title: 'Swap', href: '/sdk/components/swap' },
-      { title: 'Bridge', href: '/sdk/components/bridge' },
-    ],
-    '/sdk/hooks': [
-      { title: 'useWallet', href: '/sdk/hooks/use-wallet' },
-      { title: 'useAlert', href: '/sdk/hooks/use-alert' },
-    ],
-    '/aa-hyperwallet': [
-      { title: 'Getting Started', href: '/aa-hyperwallet/getting-started' },
-      { title: 'Core Concepts', href: '/aa-hyperwallet/concepts' },
-      { title: 'Visual Builder', href: '/aa-hyperwallet/builder' },
-    ],
-    '/aa-hyperwallet/concepts': [
-      { title: 'Account Abstraction', href: '/aa-hyperwallet/concepts/account-abstraction' },
-      { title: 'Authentication', href: '/aa-hyperwallet/concepts/authentication' },
-      { title: 'Sessions', href: '/aa-hyperwallet/concepts/sessions' },
-    ],
     '/erc1066-x402': [
       { title: 'Getting Started', href: '/erc1066-x402/getting-started' },
       { title: 'Core Concepts', href: '/erc1066-x402/concepts' },
@@ -63,8 +39,8 @@ export function getRelatedLinks(pathname: string): Array<{ title: string; href: 
     ],
     '/erc1066-x402/concepts': [
       { title: 'Status Codes', href: '/erc1066-x402/concepts#status-codes' },
-      { title: 'Policy Checks', href: '/erc1066-x402/concepts#policy-checks' },
       { title: 'Intent Validation', href: '/erc1066-x402/concepts#intent-validation' },
+      { title: 'Architecture', href: '/erc1066-x402/concepts#architecture' },
     ],
   };
 
