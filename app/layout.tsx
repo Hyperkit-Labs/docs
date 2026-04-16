@@ -4,6 +4,10 @@ import { Analytics } from "@vercel/analytics/next";
 import { DocsHeader } from '@/components/pages/docs-header';
 import { SmoothScrollProvider } from '@/components/providers/smooth-scroll-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import {
+  DocsArchiveProvider,
+  DocsArchiveNavBridge,
+} from '@/components/providers/docs-archive-provider';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,18 +36,21 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <a
-            href="#doc-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-md focus:bg-indigo-600 focus:text-white focus:text-sm focus:shadow-lg"
-          >
-            Skip to content
-          </a>
-          <DocsHeader />
-          <SmoothScrollProvider>
-            <div id="doc-content" tabIndex={-1} className="outline-none">
-              {children}
-            </div>
-          </SmoothScrollProvider>
+          <DocsArchiveProvider>
+            <a
+              href="#doc-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-md focus:bg-indigo-600 focus:text-white focus:text-sm focus:shadow-lg"
+            >
+              Skip to content
+            </a>
+            <DocsHeader />
+            <SmoothScrollProvider>
+              <div id="doc-content" tabIndex={-1} className="outline-none">
+                <DocsArchiveNavBridge />
+                {children}
+              </div>
+            </SmoothScrollProvider>
+          </DocsArchiveProvider>
         </ThemeProvider>
         <Analytics />
       </body>
