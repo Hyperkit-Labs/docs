@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useDocsArchive } from "@/components/providers/docs-archive-provider";
 import {
   Home,
   BookOpen,
@@ -10,6 +11,8 @@ import {
 } from "lucide-react";
 
 export default function NotFoundPage() {
+  const { docHref } = useDocsArchive();
+
   return (
     <div className="bg-[#03040B] text-slate-300 min-h-screen flex flex-col pt-14">
       <main
@@ -49,14 +52,14 @@ export default function NotFoundPage() {
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl px-4">
           <CardLink
-            href="/"
+            href={docHref("/")}
             icon={<Home className="w-5 h-5 text-indigo-400" strokeWidth={1.5} />}
             title="Docs home"
             desc="Overview and quick start."
             bg="bg-indigo-500/10"
           />
           <CardLink
-            href="/hyperagent"
+            href={docHref("/hyperagent")}
             icon={<BookOpen className="w-5 h-5 text-purple-400" strokeWidth={1.5} />}
             title="HyperAgent"
             desc="Workflow and Studio documentation."
