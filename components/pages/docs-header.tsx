@@ -18,9 +18,12 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useTheme } from '@/components/providers/theme-provider';
+import { useDocsArchive } from '@/components/providers/docs-archive-provider';
 import { DocsSearchModal } from '@/components/pages/docs-search-modal';
 import { formatVersion } from '@/lib/version';
-import { DOCS_NAV_SECTIONS } from '@/lib/docs-nav';
+import { DOCS_NAV_GROUPS, getAllDocsNavSections } from '@/lib/docs-nav';
+import { DOC_MODE_META } from '@/lib/doc-modes';
+import { DOCS_ARCHIVED } from '@/lib/docs-versions';
 
 const iconMap = {
   rocket: Rocket,
@@ -35,18 +38,18 @@ function MobileNavPanel({
   open: boolean;
   onClose: () => void;
 }) {
-  const pathname = usePathname();
+  const { docsPathname, docHref } = useDocsArchive();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const next = new Set<string>();
-    for (const s of DOCS_NAV_SECTIONS) {
-      if (s.children && (pathname === s.href || pathname?.startsWith(s.href + '/'))) {
+    for (const s of getAllDocsNavSections()) {
+      if (s.children && (docsPathname === s.href || docsPathname.startsWith(s.href + '/'))) {
         next.add(s.title);
       }
     }
     setExpanded(next);
-  }, [pathname, open]);
+  }, [docsPathname, open]);
 
   const toggle = (title: string) => {
     setExpanded((prev) => {
@@ -84,73 +87,93 @@ function MobileNavPanel({
             <X className="w-5 h-5" />
           </button>
         </div>
-        <nav className="p-3 space-y-1" aria-label="Mobile docs sections">
-          {DOCS_NAV_SECTIONS.map((section) => {
-            const Icon = iconMap[section.icon];
-            const isActive =
-              pathname === section.href || pathname?.startsWith(section.href + '/');
-            const hasChildren = Boolean(section.children?.length);
+        <nav className="p-3 space-y-3" aria-label="Mobile docs sections">
+          {DOCS_NAV_GROUPS.map((group) => (
+            <div key={group.label} className="space-y-1">
+              <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                {group.label}
+              </p>
+              {group.sections.map((section) => {
+                const Icon = iconMap[section.icon];
+                const isActive =
+                  docsPathname === section.href || docsPathname.startsWith(section.href + '/');
+                const hasChildren = Boolean(section.children?.length);
 
-            if (!hasChildren) {
-              return (
-                <Link
-                  key={section.title}
-                  href={section.href}
-                  onClick={onClose}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                    isActive
-                      ? 'text-indigo-400 bg-indigo-500/10 font-medium'
-                      : 'text-slate-300 hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0 opacity-80" />
-                  {section.title}
-                </Link>
-              );
-            }
+                if (!hasChildren) {
+                  return (
+                    <Link
+                      key={`${group.label}-${section.title}`}
+                      href={docHref(section.href)}
+                      onClick={onClose}
+                      className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
+                        isActive
+                          ? 'text-indigo-400 bg-indigo-500/10 font-medium'
+                          : 'text-slate-300 hover:bg-white/5'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 shrink-0 opacity-80" />
+                      {section.title}
+                    </Link>
+                  );
+                }
 
-            const isExpanded = expanded.has(section.title);
-            return (
-              <div key={section.title}>
-                <button
-                  type="button"
-                  onClick={() => toggle(section.title)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                    isActive
-                      ? 'text-indigo-400 bg-indigo-500/10 font-medium'
-                      : 'text-slate-300 hover:bg-white/5'
-                  }`}
- aria-expanded={isExpanded}
-                >
-                  <Icon className="w-4 h-4 shrink-0 opacity-80" />
-                  <span className="flex-1 text-left">{section.title}</span>
-                  {isExpanded ? (
-                    <ChevronDown className="w-4 h-4 text-slate-500" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-slate-500" />
-                  )}
-                </button>
-                {isExpanded && section.children && (
-                  <div className="ml-3 mt-1 pl-3 border-l border-white/10 space-y-0.5">
-                    {section.children.map((child) => (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        onClick={onClose}
-                        className={`block px-3 py-2 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                          pathname === child.href
-                            ? 'text-indigo-400 bg-indigo-500/10 font-medium'
-                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-                        }`}
-                      >
-                        {child.title}
-                      </Link>
-                    ))}
+                const isExpanded = expanded.has(section.title);
+                return (
+                  <div key={`${group.label}-${section.title}`}>
+                    <button
+                      type="button"
+                      onClick={() => toggle(section.title)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
+                        isActive
+                          ? 'text-indigo-400 bg-indigo-500/10 font-medium'
+                          : 'text-slate-300 hover:bg-white/5'
+                      }`}
+                      aria-expanded={isExpanded}
+                    >
+                      <Icon className="w-4 h-4 shrink-0 opacity-80" />
+                      <span className="flex-1 text-left">{section.title}</span>
+                      {isExpanded ? (
+                        <ChevronDown className="w-4 h-4 text-slate-500" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-slate-500" />
+                      )}
+                    </button>
+                    {isExpanded && section.children && (
+                      <div className="ml-3 mt-1 pl-3 border-l border-white/10 space-y-0.5">
+                        {section.children.map((child) => {
+                          const isChildActive =
+                            docsPathname === child.href ||
+                            (child.href !== '/' && docsPathname.startsWith(child.href + '/'));
+                          const modeMeta = DOC_MODE_META[child.mode];
+                          return (
+                            <Link
+                              key={child.href}
+                              href={docHref(child.href)}
+                              onClick={onClose}
+                              title={`${modeMeta.label}: ${modeMeta.blurb}`}
+                              className={`flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
+                                isChildActive
+                                  ? 'text-indigo-400 bg-indigo-500/10 font-medium'
+                                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                              }`}
+                            >
+                              <span className="min-w-0 truncate">{child.title}</span>
+                              <span
+                                className="shrink-0 text-[10px] font-semibold text-slate-500 tabular-nums w-5 h-5 flex items-center justify-center rounded border border-white/10 bg-white/[0.03]"
+                                aria-hidden
+                              >
+                                {modeMeta.abbrev}
+                              </span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </div>
     </>
@@ -159,6 +182,7 @@ function MobileNavPanel({
 
 export const DocsHeader: React.FC = () => {
   const pathname = usePathname();
+  const { docsPathname, docHref, archivePrefix } = useDocsArchive();
   const { theme, toggleTheme } = useTheme();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVersionOpen, setIsVersionOpen] = useState(false);
@@ -226,8 +250,8 @@ export const DocsHeader: React.FC = () => {
             </button>
 
             <Link
-              href="/"
-              className="flex items-center gap-3 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 rounded-md"
+              href={docHref('/')}
+              className="flex items-center gap-2 sm:gap-3 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 rounded-md"
             >
               <Image
                 src="/Hyperkit Header White (png).png"
@@ -236,6 +260,11 @@ export const DocsHeader: React.FC = () => {
                 height={28}
                 priority
               />
+              {archivePrefix ? (
+                <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-wide text-amber-400 border border-amber-500/30 rounded px-1.5 py-0.5 shrink-0">
+                  v0.1.0
+                </span>
+              ) : null}
             </Link>
 
             <nav
@@ -243,9 +272,9 @@ export const DocsHeader: React.FC = () => {
               aria-label="Primary sections"
             >
               <Link
-                href="/"
+                href={docHref('/')}
                 className={`text-xs font-medium px-3 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  pathname === '/'
+                  docsPathname === '/'
                     ? 'text-white bg-white/5'
                     : 'text-slate-400 hover:text-white'
                 }`}
@@ -253,9 +282,9 @@ export const DocsHeader: React.FC = () => {
                 Home
               </Link>
               <Link
-                href="/hyperagent"
+                href={docHref('/hyperagent')}
                 className={`text-xs font-medium px-3 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  pathname?.startsWith('/hyperagent')
+                  docsPathname.startsWith('/hyperagent')
                     ? 'text-white bg-white/5'
                     : 'text-slate-400 hover:text-white'
                 }`}
@@ -263,10 +292,10 @@ export const DocsHeader: React.FC = () => {
                 HyperAgent
               </Link>
               <Link
-                href="/hyperagent/api-reference"
+                href={docHref('/hyperagent/api-reference')}
                 className={`text-xs font-medium px-3 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  pathname?.startsWith('/hyperagent/api-reference') ||
-                  pathname?.startsWith('/erc1066-x402/api-reference')
+                  docsPathname.startsWith('/hyperagent/api-reference') ||
+                  docsPathname.startsWith('/erc1066-x402/api-reference')
                     ? 'text-white bg-white/5'
                     : 'text-slate-400 hover:text-white'
                 }`}
@@ -310,22 +339,37 @@ export const DocsHeader: React.FC = () => {
                 aria-expanded={isVersionOpen}
                 aria-haspopup="listbox"
               >
-                <span>{currentVersion}</span>
+                <span>{archivePrefix ? DOCS_ARCHIVED[0].label : currentVersion}</span>
+                {archivePrefix ? (
+                  <span className="text-[10px] font-normal text-amber-400/90">archived</span>
+                ) : null}
                 <ChevronDown
                   className={`w-3 h-3 text-slate-500 transition-transform ${isVersionOpen ? 'rotate-180' : ''}`}
                 />
               </button>
               {isVersionOpen && (
                 <div
-                  className="absolute top-full mt-1 right-0 bg-[#0B0C15] border border-white/10 rounded-md shadow-lg min-w-[120px] py-1 z-50"
+                  className="absolute top-full mt-1 right-0 bg-[#0B0C15] border border-white/10 rounded-md shadow-lg min-w-[11rem] py-1 z-50"
                   role="listbox"
                 >
-                  <button
-                    type="button"
-                    className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 transition-colors"
+                  <Link
+                    href="/"
+                    onClick={() => setIsVersionOpen(false)}
+                    className={`block w-full text-left px-3 py-1.5 text-xs transition-colors hover:bg-white/5 ${
+                      !archivePrefix ? 'text-white bg-white/5' : 'text-slate-300'
+                    }`}
                   >
-                    {currentVersion} (current)
-                  </button>
+                    {currentVersion} (latest)
+                  </Link>
+                  <Link
+                    href={DOCS_ARCHIVED[0].pathPrefix}
+                    onClick={() => setIsVersionOpen(false)}
+                    className={`block w-full text-left px-3 py-1.5 text-xs transition-colors hover:bg-white/5 ${
+                      archivePrefix ? 'text-amber-200 bg-amber-500/10' : 'text-slate-300'
+                    }`}
+                  >
+                    {DOCS_ARCHIVED[0].label} (archived)
+                  </Link>
                 </div>
               )}
             </div>
