@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Rocket, Bot, ChevronsUpDown, ChevronDown, ChevronRight, FileText } from 'lucide-react';
 import { DOCS_NAV_GROUPS, getAllDocsNavSections } from '@/lib/docs-nav';
+import { DOC_MODE_META } from '@/lib/doc-modes';
+import { useDocsArchive } from '@/components/providers/docs-archive-provider';
 
 const iconMap = {
   rocket: Rocket,
@@ -13,20 +14,18 @@ const iconMap = {
 } as const;
 
 export const DocsSidebar: React.FC = () => {
-  const pathname = usePathname();
-  const allSections = getAllDocsNavSections();
+  const { docsPathname, docHref } = useDocsArchive();
 
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    () =>
-      new Set(
-        allSections
-          .filter(
-            (s) =>
-              s.children &&
-              (pathname === s.href || pathname?.startsWith(s.href + '/'))
-          )
-          .map((s) => s.title)
-      )
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() =>
+    new Set(
+      getAllDocsNavSections()
+        .filter(
+          (s) =>
+            s.children &&
+            (docsPathname === s.href || docsPathname.startsWith(s.href + '/'))
+        )
+        .map((s) => s.title)
+    )
   );
 
   const toggleSection = (sectionTitle: string) => {
@@ -38,20 +37,24 @@ export const DocsSidebar: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+   useEffect(() => {
     setExpandedSections((prev) => {
       const next = new Set(prev);
-      for (const s of allSections) {
+      let changed = false;
+      for (const s of getAllDocsNavSections()) {
         if (
           s.children &&
-          (pathname === s.href || pathname?.startsWith(s.href + '/'))
+          (docsPathname === s.href || docsPathname.startsWith(s.href + '/'))
         ) {
-          next.add(s.title);
+          if (!next.has(s.title)) {
+            next.add(s.title);
+            changed = true;
+          }
         }
       }
-      return next;
+      return changed ? next : prev;
     });
-  }, [pathname, allSections]);
+  }, [docsPathname]);
 
   return (
     <aside className="hidden lg:block w-72 shrink-0 bg-[#05050A] min-h-screen">
@@ -77,7 +80,7 @@ export const DocsSidebar: React.FC = () => {
               {group.sections.map((section, idx) => {
                 const Icon = iconMap[section.icon];
                 const isActive =
-                  pathname === section.href || pathname?.startsWith(section.href + '/');
+                  docsPathname === section.href || docsPathname.startsWith(section.href + '/');
                 const isExpanded = expandedSections.has(section.title);
                 const hasChildren = Boolean(section.children?.length);
 
@@ -105,7 +108,7 @@ export const DocsSidebar: React.FC = () => {
                         </button>
                       ) : (
                         <Link
-                          href={section.href}
+                          href={docHref(section.href)}
                           className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                             isActive
                               ? 'text-indigo-400 bg-indigo-500/10 font-medium border-l-2 border-indigo-500'
@@ -120,18 +123,29 @@ export const DocsSidebar: React.FC = () => {
                     {hasChildren && isExpanded && section.children && (
                       <div className="ml-4 mt-1 space-y-1 border-l border-white/5 pl-4">
                         {section.children.map((child, childIdx) => {
-                          const isChildActive = pathname === child.href;
+                          const isChildActive =
+                            docsPathname === child.href ||
+                            (child.href !== '/' &&
+                              docsPathname.startsWith(child.href + '/'));
+                          const modeMeta = DOC_MODE_META[child.mode];
                           return (
                             <Link
                               key={childIdx}
-                              href={child.href}
-                              className={`block px-3 py-2 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                              href={docHref(child.href)}
+                              title={`${modeMeta.label}: ${modeMeta.blurb}`}
+                              className={`flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
                                 isChildActive
                                   ? 'text-indigo-400 bg-indigo-500/10 font-medium'
                                   : 'text-slate-400 hover:text-slate-300 hover:bg-white/5'
                               }`}
                             >
-                              {child.title}
+                              <span className="min-w-0 truncate">{child.title}</span>
+                              <span
+                                className="shrink-0 text-[10px] font-semibold text-slate-500 tabular-nums w-5 h-5 flex items-center justify-center rounded border border-white/10 bg-white/[0.03]"
+                                aria-hidden
+                              >
+                                {modeMeta.abbrev}
+                              </span>
                             </Link>
                           );
                         })}
