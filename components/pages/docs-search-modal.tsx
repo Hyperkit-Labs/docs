@@ -1,32 +1,10 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, X, FileText, Bot, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-
-interface SearchResult {
-  title: string;
-  href: string;
-  description?: string;
-  category: string;
-}
-
-const searchIndex: SearchResult[] = [
-  { title: 'HyperAgent Overview', href: '/hyperagent', category: 'HyperAgent', description: 'AI-native workflow system for smart contract delivery' },
-  { title: 'HyperAgent Getting Started', href: '/hyperagent/getting-started', category: 'HyperAgent', description: 'Studio path, BYOK, and supported scope' },
-  { title: 'HyperAgent Core Concepts', href: '/hyperagent/concepts', category: 'HyperAgent', description: 'Layers, workflow semantics, and boundaries' },
-  { title: 'HyperAgent Guides', href: '/hyperagent/guides', category: 'HyperAgent' },
-  { title: 'HyperAgent API Reference', href: '/hyperagent/api-reference', category: 'HyperAgent' },
-  { title: 'HyperAgent CLI', href: '/hyperagent/cli', category: 'HyperAgent' },
-  { title: 'HyperAgent Examples', href: '/hyperagent/examples', category: 'HyperAgent' },
-  { title: 'HyperAgent Troubleshooting', href: '/hyperagent/troubleshooting', category: 'HyperAgent' },
-
-  { title: 'ERC-1066 Overview', href: '/erc1066-x402', category: 'ERC-1066 and x402', description: 'Status semantics, policy logic, and payment-flow concepts' },
-  { title: 'ERC-1066 Getting Started', href: '/erc1066-x402/getting-started', category: 'ERC-1066 and x402' },
-  { title: 'ERC-1066 Core Concepts', href: '/erc1066-x402/concepts', category: 'ERC-1066 and x402' },
-  { title: 'ERC-1066 API Reference', href: '/erc1066-x402/api-reference', category: 'ERC-1066 and x402' },
-];
-
-const popularPages = searchIndex.slice(0, 6);
+import { getDocsSearchIndex, type DocsSearchEntry } from '@/lib/docs-search-index';
+import { DOC_MODE_META } from '@/lib/doc-modes';
+import { useDocsArchive } from '@/components/providers/docs-archive-provider';
 
 interface DocsSearchModalProps {
   isOpen: boolean;
@@ -34,13 +12,20 @@ interface DocsSearchModalProps {
 }
 
 export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClose }) => {
+  const { docHref } = useDocsArchive();
+  const searchIndex = useMemo(() => getDocsSearchIndex(), []);
+  const popularPages = useMemo(
+    () => searchIndex.filter((e) => e.href !== '/').slice(0, 8),
+    [searchIndex]
+  );
+
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<DocsSearchEntry[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const activeList: SearchResult[] = query.trim() ? results : popularPages;
+  const activeList: DocsSearchEntry[] = query.trim() ? results : popularPages;
 
   useEffect(() => {
     if (isOpen) {
@@ -57,15 +42,22 @@ export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClos
     }
 
     const lowerQuery = query.toLowerCase();
-    const filtered = searchIndex.filter(item =>
-      item.title.toLowerCase().includes(lowerQuery) ||
-      item.description?.toLowerCase().includes(lowerQuery) ||
-      item.category.toLowerCase().includes(lowerQuery)
-    ).slice(0, 8);
+    const filtered = searchIndex
+      .filter((item) => {
+        const modeLabel = DOC_MODE_META[item.mode].label.toLowerCase();
+        return (
+          item.title.toLowerCase().includes(lowerQuery) ||
+          item.description?.toLowerCase().includes(lowerQuery) ||
+          item.category.toLowerCase().includes(lowerQuery) ||
+          item.groupLabel.toLowerCase().includes(lowerQuery) ||
+          modeLabel.includes(lowerQuery)
+        );
+      })
+      .slice(0, 12);
 
     setResults(filtered);
     setSelectedIndex(0);
-  }, [query]);
+  }, [query, searchIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -83,14 +75,14 @@ export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClos
         setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
       } else if (e.key === 'Enter' && activeList[selectedIndex]) {
         e.preventDefault();
-        window.location.href = activeList[selectedIndex].href;
+        window.location.href = docHref(activeList[selectedIndex].href);
         onClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, activeList, selectedIndex, onClose]);
+  }, [isOpen, activeList, selectedIndex, onClose, docHref]);
 
   useEffect(() => {
     setSelectedIndex((i) => Math.min(i, Math.max(0, activeList.length - 1)));
@@ -129,7 +121,7 @@ export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClos
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search titles and descriptions..."
+            placeholder="Search titles, topics, and doc types..."
             className="flex-1 min-w-0 bg-transparent border-none outline-none text-sm text-white placeholder-slate-500 focus-visible:ring-0"
             aria-autocomplete="list"
             aria-controls="search-results-list"
@@ -148,7 +140,7 @@ export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClos
         <p className="px-4 py-2 text-[11px] text-slate-500 border-b border-white/5">
           {query.trim()
             ? `${results.length} result${results.length === 1 ? '' : 's'}`
-            : 'Popular pages — type to filter'}
+            : 'Popular pages. Type to filter by title, section, or doc type (tutorial, how-to, reference, explanation).'}
         </p>
 
         <div
@@ -160,13 +152,13 @@ export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClos
         >
           {activeList.length === 0 && query.trim() ? (
             <div className="px-4 py-8 text-center text-sm text-slate-500">
-              No matches. Try &quot;HyperAgent&quot;, &quot;x402&quot;, or &quot;API&quot;.
+              No matches. Try &quot;HyperAgent&quot;, &quot;x402&quot;, &quot;API&quot;, or &quot;tutorial&quot;.
             </div>
           ) : (
             activeList.map((result, index) => (
               <Link
-                key={`${result.href}-${result.title}`}
-                href={result.href}
+                key={`${result.href}-${result.title}-${result.mode}`}
+                href={docHref(result.href)}
                 onClick={onClose}
                 role="option"
                 aria-selected={index === selectedIndex}
@@ -176,9 +168,17 @@ export const DocsSearchModal: React.FC<DocsSearchModalProps> = ({ isOpen, onClos
               >
                 <div className="text-slate-400 shrink-0">{getCategoryIcon(result.category)}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-white">{result.title}</div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-medium text-white">{result.title}</span>
+                    <span
+                      className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 border border-white/10 rounded px-1.5 py-0.5 shrink-0"
+                      title={DOC_MODE_META[result.mode].blurb}
+                    >
+                      {DOC_MODE_META[result.mode].label}
+                    </span>
+                  </div>
                   {result.description ? (
-                    <div className="text-xs text-slate-500 truncate">{result.description}</div>
+                    <div className="text-xs text-slate-500 truncate mt-0.5">{result.description}</div>
                   ) : null}
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" aria-hidden />
