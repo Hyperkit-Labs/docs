@@ -1,22 +1,20 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
-import { CodeBlock } from '@/components/pages/docs-codeblock';
+import { Callout } from '@/components/pages/docs-callout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WorkflowsAPIPage() {
   const tocItems = [
     { id: 'overview', label: 'Overview' },
-    { id: 'create-workflow', label: 'Create Workflow' },
-    { id: 'get-status', label: 'Get Workflow Status' }
+    { id: 'run-model', label: 'Run Model' },
+    { id: 'current-reading', label: 'How to Read This' }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
@@ -24,7 +22,7 @@ export default function WorkflowsAPIPage() {
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-8 font-medium">
             <Link href="/" className="hover:text-slate-300 transition-colors">Docs</Link>
             <span>/</span>
-            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">Hyperagent</Link>
+            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">HyperAgent</Link>
             <span>/</span>
             <Link href="/hyperagent/api-reference" className="hover:text-slate-300 transition-colors">API Reference</Link>
             <span>/</span>
@@ -33,45 +31,26 @@ export default function WorkflowsAPIPage() {
 
           <h1 className="text-4xl font-medium tracking-tight text-white mb-6">Workflows API</h1>
           <p className="text-lg text-slate-400 leading-relaxed mb-8">
-            Create and monitor end-to-end workflows for contract generation, auditing, and deployment.
+            The workflows API is the clearest operational surface of HyperAgent. It should be read as the control-plane interface for run creation, state tracking, and staged output visibility rather than as a thin wrapper around one contract-generation endpoint.
           </p>
 
-          <h2 id="create-workflow" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
-            Create Workflow
+          <Callout type="info" title="Current Product Reading">
+            HyperAgent is best understood through the workflow path. The current MVP path is Studio to API gateway to orchestrator to compile, audit, simulation, deploy, and storage services.
+          </Callout>
+
+          <h2 id="run-model" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Run Model
           </h2>
-          <CodeBlock
-            language="bash"
-            code={`<span class="text-blue-400">POST</span> /api/v1/workflows
+          <p className="leading-7 mb-6">
+            A workflow should be interpreted as a durable run with stage-level state, not as a one-shot request. The current product and repository model track runs, run steps, stage transitions, and workflow outputs as first-class control-plane state. This matters because release-readiness, verification, simulation, and deploy preparation all depend on durable workflow evidence rather than transient logs alone.
+          </p>
 
-<span class="text-slate-500">Request Body:</span>
-{
-  <span class="text-green-400">"nlp_description"</span>: <span class="text-green-400">"Create an ERC20 token"</span>,
-  <span class="text-green-400">"contract_type"</span>: <span class="text-green-400">"token"</span>,
-  <span class="text-green-400">"network"</span>: <span class="text-green-400">"mantle-testnet"</span>
-}
-
-<span class="text-slate-500">Response:</span>
-{
-  <span class="text-green-400">"workflow_id"</span>: <span class="text-green-400">"uuid"</span>,
-  <span class="text-green-400">"status"</span>: <span class="text-green-400">"pending"</span>
-}`}
-          />
-
-          <h2 id="get-status" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
-            Get Workflow Status
+          <h2 id="current-reading" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            How to Read This
           </h2>
-          <CodeBlock
-            language="bash"
-            code={`<span class="text-blue-400">GET</span> /api/v1/workflows/{workflow_id}
-
-<span class="text-slate-500">Response:</span>
-{
-  <span class="text-green-400">"workflow_id"</span>: <span class="text-green-400">"uuid"</span>,
-  <span class="text-green-400">"status"</span>: <span class="text-green-400">"running"</span>,
-  <span class="text-green-400">"progress_percentage"</span>: <span class="text-blue-400">45</span>,
-  <span class="text-green-400">"current_stage"</span>: <span class="text-green-400">"auditing"</span>
-}`}
-          />
+          <p className="leading-7 mb-6">
+            Older docs may make workflows sound like broad lifecycle automation across every chain and capability. The current truth set is narrower. Read the workflows API as the current control-plane surface for the MVP lane, then read broader claims only where implementation status is explicitly stated.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-white/5">
             <Link href="/hyperagent/api-reference/deployments" className="group block p-4 rounded-xl border border-white/10 hover:border-amber-500/30 hover:bg-white/5 transition-all">
@@ -95,4 +74,3 @@ export default function WorkflowsAPIPage() {
     </div>
   );
 }
-
