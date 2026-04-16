@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
 import { ArrowRight, ArrowLeft, FileCode, Server, Code2 } from 'lucide-react';
@@ -16,7 +15,6 @@ export default function APIReferencePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
