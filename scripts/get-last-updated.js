@@ -22,6 +22,12 @@ const SHARED_PAGE_INFLUENCERS = [
   'components/providers/theme-provider.tsx',
   'components/providers/smooth-scroll-provider.tsx',
   'lib/docs-nav.ts',
+  'lib/doc-modes.ts',
+  'lib/docs-search-index.ts',
+  'lib/docs-versions.ts',
+  'lib/docs-href.ts',
+  'middleware.ts',
+  'components/providers/docs-archive-provider.tsx',
 ];
 
 function toPosixRel(absFilePath) {
