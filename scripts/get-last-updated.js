@@ -19,14 +19,13 @@ const SHARED_PAGE_INFLUENCERS = [
   'components/pages/docs-callout.tsx',
   'components/pages/docs-mermaid.tsx',
   'components/pages/docs-status-code-table.tsx',
-  'components/providers/theme-provider.tsx',
   'components/providers/smooth-scroll-provider.tsx',
   'lib/docs-nav.ts',
   'lib/doc-modes.ts',
   'lib/docs-search-index.ts',
   'lib/docs-versions.ts',
   'lib/docs-href.ts',
-  'middleware.ts',
+  'lib/social-links.ts',
   'components/providers/docs-archive-provider.tsx',
 ];
 
