@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "update-metadata": "node scripts/get-last-updated.js",
+    "materialize:v0.1.0": "node scripts/materialize-archive-v0.1.0.mjs",
     "commit": "node scripts/parallel-commit.js",
     "commit:dry": "node scripts/parallel-commit.js --dry-run",
     "commit:sh": "bash scripts/parallel-commit.sh",
