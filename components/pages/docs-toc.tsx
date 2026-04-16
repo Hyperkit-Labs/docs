@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { PenLine, Clock } from 'lucide-react';
 import { getGitHubEditUrl, getRelatedLinks, formatLastUpdated, getLastUpdatedDate } from '@/lib/github-utils';
+import { useDocsArchive } from '@/components/providers/docs-archive-provider';
 
 interface TOCItem {
   id: string;
@@ -18,19 +19,28 @@ interface DocsTOCProps {
 
 export const DocsTOC: React.FC<DocsTOCProps> = ({ items, footerHeight = 0 }) => {
   const pathname = usePathname();
+  const { docsPathname, docHref } = useDocsArchive();
   const [activeId, setActiveId] = useState<string>('');
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const githubUrl = pathname ? getGitHubEditUrl(pathname) : '#';
-  const relatedLinks = pathname ? getRelatedLinks(pathname) : [];
+  const canonicalPath = docsPathname || '/';
+
+  const githubUrl = useMemo(
+    () => (pathname ? getGitHubEditUrl(canonicalPath) : '#'),
+    [pathname, canonicalPath]
+  );
+
+  const relatedLinks = useMemo(() => {
+    const raw = pathname ? getRelatedLinks(canonicalPath) : [];
+    return raw.map((l) => ({ ...l, href: docHref(l.href) }));
+  }, [pathname, canonicalPath, docHref]);
 
   useEffect(() => {
-    // Get last updated date from metadata or fallback
     if (pathname) {
-      const updateTime = getLastUpdatedDate(pathname);
+      const updateTime = getLastUpdatedDate(canonicalPath);
       setLastUpdated(formatLastUpdated(updateTime));
     }
-  }, [pathname]);
+  }, [pathname, canonicalPath]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
