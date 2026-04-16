@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
@@ -8,12 +7,12 @@ import Link from 'next/link';
 
 export default function ExamplesPage() {
   const tocItems = [
-    { id: 'overview', label: 'Overview' }
+    { id: 'overview', label: 'Overview' },
+    { id: 'scope', label: 'Example Scope' }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
@@ -21,14 +20,21 @@ export default function ExamplesPage() {
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-8 font-medium">
             <Link href="/" className="hover:text-slate-300 transition-colors">Docs</Link>
             <span>/</span>
-            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">Hyperagent</Link>
+            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">HyperAgent</Link>
             <span>/</span>
             <span className="text-amber-400">Examples</span>
           </div>
 
           <h1 className="text-4xl font-medium tracking-tight text-white mb-6">Examples</h1>
           <p className="text-lg text-slate-400 leading-relaxed mb-8">
-            Real-world usage examples and integration patterns for Hyperagent.
+            These pages should be read as examples of current workflow use and documentation patterns, not as proof that every example reflects the current production-support matrix equally.
+          </p>
+
+          <h2 id="scope" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Example Scope
+          </h2>
+          <p className="leading-7 mb-8">
+            Examples remain useful for understanding the shape of generated workflows, audit interpretation, and payment concepts. They should not override current scope notes in the main product pages. If an example conflicts with the updated truth set, the truth set takes precedence.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-white/5">
@@ -39,6 +45,13 @@ export default function ExamplesPage() {
                 CLI
               </div>
             </Link>
+            <Link href="/hyperagent/examples/basic-generation" className="group block p-4 rounded-xl border border-white/10 hover:border-amber-500/30 hover:bg-white/5 transition-all text-right">
+              <div className="text-xs text-slate-500 mb-1">Next</div>
+              <div className="text-sm font-medium text-slate-200 group-hover:text-amber-400 flex items-center justify-end gap-2">
+                Basic Generation
+                <ArrowRight className="w-3 h-3" />
+              </div>
+            </Link>
           </div>
         </main>
         <DocsTOC items={tocItems} />
@@ -46,4 +59,3 @@ export default function ExamplesPage() {
     </div>
   );
 }
-
