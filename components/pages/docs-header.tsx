@@ -377,6 +377,23 @@ export const DocsHeader: React.FC = () => {
             <div className="hidden sm:block h-4 w-px bg-white/10 mx-0.5" />
 
             <a
+              href="https://deepwiki.com/Hyperkit-Labs/hyperagent"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center shrink-0 rounded-md opacity-90 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
+              aria-label="Ask DeepWiki about HyperAgent"
+            >
+              <img
+                src="https://deepwiki.com/badge.svg"
+                alt=""
+                width={120}
+                height={20}
+                className="h-5 w-auto block"
+                loading="lazy"
+              />
+            </a>
+
+            <a
               href="https://github.com/Hyperkit-Labs"
               target="_blank"
               rel="noopener noreferrer"
