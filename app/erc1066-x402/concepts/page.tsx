@@ -1,13 +1,36 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
 import { CodeBlock } from '@/components/pages/docs-codeblock';
 import { Callout } from '@/components/pages/docs-callout';
 import { StatusCodeTable } from '@/components/pages/docs-status-code-table';
-import { ArrowRight, ArrowLeft, Layers, Shield, Clock, Code } from 'lucide-react';
+import { DocsMermaid } from '@/components/pages/docs-mermaid';
+import { ArrowRight, ArrowLeft, Layers, Shield, Code } from 'lucide-react';
 import Link from 'next/link';
+
+const ERC1066_X402_ARCHITECTURE_DIAGRAM = `flowchart TB
+  subgraph clientLayer["Client layer"]
+    agent["Agent or application"]
+    sdk["TypeScript or Python SDK"]
+  end
+  subgraph gatewayLayer["Off-chain gateway"]
+    gw["Gateway HTTP API"]
+  end
+  subgraph chainLayer["On-chain contracts"]
+    validator["BaseIntentValidator"]
+    policies["PolicyRegistry"]
+    executor["IntentExecutor"]
+    statusLib["StatusCodes"]
+  end
+  agent --> sdk
+  sdk -->|"validate and execute"| gw
+  gw -->|"JSON, ERC-1066 codes, HTTP 402"| sdk
+  gw --> validator
+  gw --> executor
+  validator --> policies
+  validator --> statusLib
+  executor --> policies`;
 
 export default function ConceptsPage() {
   const tocItems = [
@@ -20,7 +43,6 @@ export default function ConceptsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
@@ -162,6 +184,11 @@ export default function ConceptsPage() {
           <p className="leading-7 mb-6">
             ERC-1066-x402 follows a layered architecture with clear separation between on-chain and off-chain components.
           </p>
+
+          <DocsMermaid
+            chart={ERC1066_X402_ARCHITECTURE_DIAGRAM}
+            caption="High-level data flow: clients call the gateway, which talks to validators and the executor on chain, while policies and status codes anchor consistency."
+          />
 
           <div className="rounded-lg border border-white/10 bg-[#0A0A0F] p-6 mb-8">
             <h3 className="text-sm font-medium text-white mb-4">On-Chain Components</h3>
