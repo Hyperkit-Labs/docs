@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Rocket, Bot, ChevronsUpDown, ChevronDown, ChevronRight, FileText } from 'lucide-react';
-import { DOCS_NAV_SECTIONS } from '@/lib/docs-nav';
+import { DOCS_NAV_GROUPS, getAllDocsNavSections } from '@/lib/docs-nav';
 
 const iconMap = {
   rocket: Rocket,
@@ -14,14 +14,18 @@ const iconMap = {
 
 export const DocsSidebar: React.FC = () => {
   const pathname = usePathname();
+  const allSections = getAllDocsNavSections();
+
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     () =>
       new Set(
-        DOCS_NAV_SECTIONS.filter(
-          (s) =>
-            s.children &&
-            (pathname === s.href || pathname?.startsWith(s.href + '/'))
-        ).map((s) => s.title)
+        allSections
+          .filter(
+            (s) =>
+              s.children &&
+              (pathname === s.href || pathname?.startsWith(s.href + '/'))
+          )
+          .map((s) => s.title)
       )
   );
 
@@ -37,7 +41,7 @@ export const DocsSidebar: React.FC = () => {
   useEffect(() => {
     setExpandedSections((prev) => {
       const next = new Set(prev);
-      for (const s of DOCS_NAV_SECTIONS) {
+      for (const s of allSections) {
         if (
           s.children &&
           (pathname === s.href || pathname?.startsWith(s.href + '/'))
@@ -47,7 +51,7 @@ export const DocsSidebar: React.FC = () => {
       }
       return next;
     });
-  }, [pathname]);
+  }, [pathname, allSections]);
 
   return (
     <aside className="hidden lg:block w-72 shrink-0 bg-[#05050A] min-h-screen">
@@ -64,73 +68,80 @@ export const DocsSidebar: React.FC = () => {
           </div>
         </div>
 
-        <nav className="px-4 py-6 space-y-1" aria-label="Documentation sidebar">
-          {DOCS_NAV_SECTIONS.map((section, idx) => {
-            const Icon = iconMap[section.icon];
-            const isActive =
-              pathname === section.href || pathname?.startsWith(section.href + '/');
-            const isExpanded = expandedSections.has(section.title);
-            const hasChildren = Boolean(section.children?.length);
+        <nav className="px-4 py-4 space-y-1" aria-label="Documentation sidebar">
+          {DOCS_NAV_GROUPS.map((group) => (
+            <div key={group.label} className="space-y-1">
+              <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500 first:pt-2">
+                {group.label}
+              </p>
+              {group.sections.map((section, idx) => {
+                const Icon = iconMap[section.icon];
+                const isActive =
+                  pathname === section.href || pathname?.startsWith(section.href + '/');
+                const isExpanded = expandedSections.has(section.title);
+                const hasChildren = Boolean(section.children?.length);
 
-            return (
-              <div key={idx}>
-                <div className="flex items-center">
-                  {hasChildren ? (
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(section.title)}
-                      aria-expanded={isExpanded}
-                      className={`flex-1 flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
-                        isActive
-                          ? 'text-indigo-400 bg-indigo-500/10 font-medium'
-                          : 'text-slate-300 hover:text-indigo-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden />
-                      <span className="flex-1 text-left">{section.title}</span>
-                      {isExpanded ? (
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden />
-                      ) : (
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden />
-                      )}
-                    </button>
-                  ) : (
-                    <Link
-                      href={section.href}
-                      className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
-                        isActive
-                          ? 'text-indigo-400 bg-indigo-500/10 font-medium border-l-2 border-indigo-500'
-                          : 'text-slate-300 hover:text-indigo-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden />
-                      <span>{section.title}</span>
-                    </Link>
-                  )}
-                </div>
-                {hasChildren && isExpanded && section.children && (
-                  <div className="ml-4 mt-1 space-y-1 border-l border-white/5 pl-4">
-                    {section.children.map((child, childIdx) => {
-                      const isChildActive = pathname === child.href;
-                      return (
-                        <Link
-                          key={childIdx}
-                          href={child.href}
-                          className={`block px-3 py-2 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
-                            isChildActive
+                return (
+                  <div key={`${group.label}-${section.title}-${idx}`}>
+                    <div className="flex items-center">
+                      {hasChildren ? (
+                        <button
+                          type="button"
+                          onClick={() => toggleSection(section.title)}
+                          aria-expanded={isExpanded}
+                          className={`flex-1 flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                            isActive
                               ? 'text-indigo-400 bg-indigo-500/10 font-medium'
-                              : 'text-slate-400 hover:text-slate-300 hover:bg-white/5'
+                              : 'text-slate-300 hover:text-indigo-300 hover:bg-white/5'
                           }`}
                         >
-                          {child.title}
+                          <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                          <span className="flex-1 text-left">{section.title}</span>
+                          {isExpanded ? (
+                            <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden />
+                          ) : (
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden />
+                          )}
+                        </button>
+                      ) : (
+                        <Link
+                          href={section.href}
+                          className={`flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                            isActive
+                              ? 'text-indigo-400 bg-indigo-500/10 font-medium border-l-2 border-indigo-500'
+                              : 'text-slate-300 hover:text-indigo-300 hover:bg-white/5'
+                          }`}
+                        >
+                          <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                          <span>{section.title}</span>
                         </Link>
-                      );
-                    })}
+                      )}
+                    </div>
+                    {hasChildren && isExpanded && section.children && (
+                      <div className="ml-4 mt-1 space-y-1 border-l border-white/5 pl-4">
+                        {section.children.map((child, childIdx) => {
+                          const isChildActive = pathname === child.href;
+                          return (
+                            <Link
+                              key={childIdx}
+                              href={child.href}
+                              className={`block px-3 py-2 text-sm rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                                isChildActive
+                                  ? 'text-indigo-400 bg-indigo-500/10 font-medium'
+                                  : 'text-slate-400 hover:text-slate-300 hover:bg-white/5'
+                              }`}
+                            >
+                              {child.title}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </div>
     </aside>
