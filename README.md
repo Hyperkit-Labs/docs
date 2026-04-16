@@ -1,5 +1,7 @@
 # Hyperkit Docs
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Hyperkit-Labs/hyperagent)
+
 Official documentation site for Hyperkit products and protocols.
 
 ## Current scope
