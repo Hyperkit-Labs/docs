@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { DocsHeader } from '@/components/pages/docs-header';
 import { DocsSidebar } from '@/components/pages/docs-sidebar';
 import { DocsTOC } from '@/components/pages/docs-toc';
 import { Callout } from '@/components/pages/docs-callout';
@@ -10,13 +9,12 @@ import Link from 'next/link';
 export default function X402APIPage() {
   const tocItems = [
     { id: 'overview', label: 'Overview' },
-    { id: 'thirdweb-integration', label: 'Thirdweb Integration' },
-    { id: 'endpoints', label: 'Endpoints' }
+    { id: 'current-contract', label: 'Current Contract' },
+    { id: 'api-boundary', label: 'API Boundary' }
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050A] text-slate-400 font-sans antialiased">
-      <DocsHeader onMenuToggle={() => {}} />
       
       <div className="flex flex-1 pt-14 w-full max-w-[1600px] mx-auto">
         <DocsSidebar />
@@ -24,7 +22,7 @@ export default function X402APIPage() {
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-8 font-medium">
             <Link href="/" className="hover:text-slate-300 transition-colors">Docs</Link>
             <span>/</span>
-            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">Hyperagent</Link>
+            <Link href="/hyperagent" className="hover:text-slate-300 transition-colors">HyperAgent</Link>
             <span>/</span>
             <Link href="/hyperagent/api-reference" className="hover:text-slate-300 transition-colors">API Reference</Link>
             <span>/</span>
@@ -33,41 +31,32 @@ export default function X402APIPage() {
 
           <h1 className="text-4xl font-medium tracking-tight text-white mb-6">x402 API</h1>
           <p className="text-lg text-slate-400 leading-relaxed mb-8">
-            Pay-per-use payment endpoints for smart contract operations on Avalanche networks.
+            This section explains the payment-facing API boundary for HyperAgent. Read it as the current payment contract for supported flows, not as a promise of uniform payment behavior across every environment or chain.
           </p>
 
-          <Callout type="info" title="Thirdweb Integration">
-            Hyperagent uses Thirdweb as a third-party service provider for x402 payment processing. All payment endpoints integrate with Thirdweb&apos;s infrastructure to handle transactions on Avalanche networks.
+          <Callout type="info" title="Current Product Truth">
+            The current documentation baseline treats x402 as the intended payment wall for supported flows. Older credits-era wording should be treated as legacy or transitional unless a page has already been updated to the `v0.2.0` truth set.
           </Callout>
 
           <h2 id="overview" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
             Overview
           </h2>
           <p className="leading-7 mb-6">
-            The x402 API provides endpoints for managing pay-per-use payments for smart contract operations. These endpoints handle payment processing, spending controls, and analytics through Thirdweb integration.
+            The x402 API belongs to the workflow system, not to a separate standalone payment product. It should be understood as the payment contract that gates supported workflow operations where payment is required. This is why the current docs now frame x402 as part of the HyperAgent operating path rather than as a broad pay-per-use layer across every chain named elsewhere in older materials.
           </p>
 
-          <h2 id="thirdweb-integration" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
-            Thirdweb Integration
+          <h2 id="current-contract" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            Current Contract
           </h2>
-          <p className="leading-7 mb-4">
-            All x402 endpoints use Thirdweb as the payment service provider. Thirdweb handles:
-          </p>
-          <ul className="list-disc list-outside ml-6 mb-6 space-y-2 text-slate-400">
-            <li>Payment processing on Avalanche networks</li>
-            <li>USDC token transfers</li>
-            <li>Transaction verification and confirmation</li>
-            <li>Wallet connection and authentication</li>
-          </ul>
           <p className="leading-7 mb-6">
-            To use x402 endpoints, you need to configure your Thirdweb client ID in the environment variables. See the <Link href="/hyperagent/guides/x402-integration" className="text-amber-400 hover:text-amber-300 underline">x402 Integration Guide</Link> for setup instructions.
+            The active product truth set is narrower than older API descriptions. x402 is the intended payment contract for supported flows. Legacy language about credits or alternate billing paths should be read as implementation residue unless the current page explicitly restates them as supported behavior.
           </p>
 
-          <h2 id="endpoints" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
-            Endpoints
+          <h2 id="api-boundary" className="text-2xl font-medium tracking-tight text-white mt-12 mb-4 scroll-mt-20">
+            API Boundary
           </h2>
           <p className="leading-7 mb-6">
-            The x402 API includes endpoints for workflows, contracts, deployments, spending controls, and analytics. All endpoints require Thirdweb authentication and work with Avalanche networks.
+            The payment API should be interpreted through three boundaries. First, it is part of the current workflow system. Second, it follows the narrower implementation scope documented in the current product path. Third, the surrounding billing, reconciliation, and policy controls are still part of an evolving operational layer rather than a fully generalized universal payment stack.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 pt-8 border-t border-white/5">
@@ -92,4 +81,3 @@ export default function X402APIPage() {
     </div>
   );
 }
-
