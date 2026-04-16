@@ -6,9 +6,9 @@ The "Last updated" timestamp in the documentation shows when each page was last 
 
 ## How It Works
 
-1. **Build Time**: Before building, a script (`scripts/get-last-updated.js`) scans all page files and gets their last Git commit date
-2. **Metadata File**: The dates are stored in `lib/last-updated-metadata.json`
-3. **Display**: The `DocsTOC` component reads from this metadata and displays the formatted timestamp
+1. **Build Time**: Before building, a script (`scripts/get-last-updated.js`) scans all `app/**/page.tsx` routes. For each route it records the **latest Git commit** that touched **either** that page file **or** shared documentation chrome (for example `app/layout.tsx`, `DocsHeader`, `DocsSidebar`, `DocsTOC`, search modal, `lib/docs-nav.ts`, and related providers). So a global navigation or layout change updates the displayed date on every page after you commit and rebuild.
+2. **Metadata File**: The dates are stored in `lib/last-updated-metadata.json` and `lib/last-updated-metadata.ts`.
+3. **Display**: The `DocsTOC` component reads from this metadata and displays the formatted timestamp (relative to the viewer’s current time in the browser).
 
 ## Updating Last Updated Timestamps
 
@@ -32,8 +32,8 @@ npm run update-metadata
 
 This will:
 - Scan all `page.tsx` files in the `app` directory
-- Get the last Git commit date for each file
-- Update `lib/last-updated-metadata.json`
+- For each route, get the latest Git commit date across that `page.tsx` and the shared influencer list in `scripts/get-last-updated.js`
+- Update `lib/last-updated-metadata.json` and `lib/last-updated-metadata.ts`
 
 ### After Making Changes
 
