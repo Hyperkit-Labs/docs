@@ -1,13 +1,13 @@
 // Version information
 // This file reads from package.json at build time
 
-let versionCache: string = '0.1.0';
+let versionCache: string = '0.2.0';
 
 /**
  * Get the current version string from package.json
  */
 function getVersionFromPackage(): string {
-  if (versionCache !== '0.1.0') {
+  if (versionCache !== '0.2.0') {
     return versionCache;
   }
   
@@ -15,7 +15,7 @@ function getVersionFromPackage(): string {
     // In Node.js environment (server-side)
     if (typeof require !== 'undefined') {
       const packageJson = require('../package.json');
-      versionCache = packageJson.version || '0.1.0';
+      versionCache = packageJson.version || '0.2.0';
       return versionCache;
     }
   } catch {
@@ -23,7 +23,7 @@ function getVersionFromPackage(): string {
   }
   
   // Default fallback
-  return '0.1.0';
+  return '0.2.0';
 }
 
 export const version = getVersionFromPackage();
