@@ -18,6 +18,8 @@ const SHARED_PAGE_INFLUENCERS = [
   'components/pages/docs-codeblock.tsx',
   'components/pages/docs-callout.tsx',
   'components/pages/docs-mermaid.tsx',
+  'components/pages/whitepaper-markdown.tsx',
+  'components/pages/whitepaper-market-sizing-chart.tsx',
   'components/pages/docs-status-code-table.tsx',
   'components/providers/smooth-scroll-provider.tsx',
   'lib/docs-nav.ts',
@@ -26,6 +28,9 @@ const SHARED_PAGE_INFLUENCERS = [
   'lib/docs-versions.ts',
   'lib/docs-href.ts',
   'lib/social-links.ts',
+  'lib/whitepaper-markdown-transform.ts',
+  'lib/load-whitepaper-source.ts',
+  'docs/Hyperkit Whitepaper v1.2.0.md',
   'components/providers/docs-archive-provider.tsx',
 ];
 
