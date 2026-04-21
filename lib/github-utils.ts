@@ -17,6 +17,11 @@ export function getGitHubEditUrl(pathname: string): string {
 
 export function getRelatedLinks(pathname: string): Array<{ title: string; href: string }> {
   const relatedMap: Record<string, Array<{ title: string; href: string }>> = {
+    '/whitepaper': [
+      { title: 'HyperAgent overview', href: '/hyperagent' },
+      { title: 'Core concepts', href: '/hyperagent/concepts' },
+      { title: 'Documentation home', href: '/' },
+    ],
     '/hyperagent': [
       { title: 'Getting Started', href: '/hyperagent/getting-started' },
       { title: 'Core Concepts', href: '/hyperagent/concepts' },
