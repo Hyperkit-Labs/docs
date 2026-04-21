@@ -20,6 +20,7 @@ const SHARED_PAGE_INFLUENCERS = [
   'components/pages/docs-mermaid.tsx',
   'components/pages/whitepaper-markdown.tsx',
   'components/pages/whitepaper-market-sizing-chart.tsx',
+  'components/pages/whitepaper-evidence-radar-chart.tsx',
   'components/pages/docs-status-code-table.tsx',
   'components/providers/smooth-scroll-provider.tsx',
   'lib/docs-nav.ts',
