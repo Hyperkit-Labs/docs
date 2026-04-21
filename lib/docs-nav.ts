@@ -39,6 +39,14 @@ export const DOCS_NAV_GROUPS: DocsNavGroup[] = [
         docMode: 'explanation',
         searchHint: 'Hub, product areas, and how documentation is organized',
       },
+      {
+        title: 'Whitepaper',
+        icon: 'file',
+        href: '/whitepaper',
+        docMode: 'explanation',
+        searchHint:
+          'Hyperkit v1.2.0 whitepaper: HyperAgent architecture, market model, validation, roadmap, appendices',
+      },
     ],
   },
   {
