@@ -107,6 +107,7 @@ export function prepareWhitepaperMarkdown(raw: string): string {
   }
 
   text = replaceConservativeMarketSizingTableWithChartBlock(text);
+  text = replaceEvidenceStatusTableWithRadarBlock(text);
 
   return text;
 }
@@ -122,6 +123,23 @@ function replaceConservativeMarketSizingTableWithChartBlock(text: string): strin
     return `**Conservative market sizing model used in v1.2.0**
 
 \`\`\`whitepaper-market-sizing
+\`\`\`
+
+`;
+  });
+}
+
+/**
+ * Replaces the markdown table under "Evidence status of core claims" with a fenced block
+ * rendered as a Recharts radar chart (see whitepaper-evidence-radar-chart.tsx).
+ */
+function replaceEvidenceStatusTableWithRadarBlock(text: string): string {
+  const re =
+    /\*\*Evidence status of core claims\*\*\s*\n\n(?:(?:\|[^\r\n]*\r?\n)+)/;
+  return text.replace(re, () => {
+    return `**Evidence status of core claims**
+
+\`\`\`whitepaper-radar-evidence-status
 \`\`\`
 
 `;
