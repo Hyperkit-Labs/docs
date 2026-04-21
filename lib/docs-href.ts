@@ -2,6 +2,9 @@
  * Helpers for version-prefixed doc URLs (archived snapshots under /v0.1.0/...).
  */
 
+/** Doc routes that exist only on latest; archive views should link to canonical URLs. */
+const LATEST_ONLY_PATHS = new Set(['/whitepaper']);
+
 export function withArchivePrefix(href: string, archivePrefix: string): string {
   if (!archivePrefix) return href;
   if (href.startsWith('http://') || href.startsWith('https://')) return href;
@@ -17,6 +20,9 @@ export function withArchivePrefix(href: string, archivePrefix: string): string {
   }
 
   const path = pathPart.startsWith('/') ? pathPart : `/${pathPart}`;
+  if (LATEST_ONLY_PATHS.has(path)) {
+    return `${path}${hash}`;
+  }
   return `${archivePrefix}${path}${hash}`;
 }
 
