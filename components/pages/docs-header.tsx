@@ -194,7 +194,7 @@ function MobileNavPanel({
 
 export const DocsHeader: React.FC = () => {
   const pathname = usePathname();
-   const { docsPathname, docHref, archivePrefix } = useDocsArchive();
+  const { docHref, archivePrefix } = useDocsArchive();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVersionOpen, setIsVersionOpen] = useState(false);
   const [isSocialOpen, setIsSocialOpen] = useState(false);
@@ -285,43 +285,6 @@ export const DocsHeader: React.FC = () => {
                 </span>
               ) : null}
             </Link>
-
-            <nav
-              className="hidden md:flex items-center gap-1 ml-4 border-l border-white/10 pl-4 h-6"
-              aria-label="Primary sections"
-            >
-              <Link
-                href={docHref('/')}
-                className={`text-xs font-medium px-3 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  docsPathname === '/'
-                    ? 'text-white bg-white/5'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Home
-              </Link>
-              <Link
-                href={docHref('/hyperagent')}
-                className={`text-xs font-medium px-3 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  docsPathname.startsWith('/hyperagent')
-                    ? 'text-white bg-white/5'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                HyperAgent
-              </Link>
-              <Link
-                href={docHref('/hyperagent/api-reference')}
-                className={`text-xs font-medium px-3 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 ${
-                  docsPathname.startsWith('/hyperagent/api-reference') ||
-                  docsPathname.startsWith('/erc1066-x402/api-reference')
-                    ? 'text-white bg-white/5'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                API
-              </Link>
-            </nav>
           </div>
 
           <div className="hidden lg:flex flex-1 max-w-lg mx-4 xl:mx-8 justify-center">
