@@ -35,7 +35,11 @@ export default function Page() {
             Hyperkit Documentation
           </h1>
           <p className="text-lg text-slate-400 leading-relaxed mb-8">
-            Hyperkit is workflow software for multi-chain smart contract delivery. These docs track the HyperAgent system model from the Hyperkit whitepaper (v1.2.0): Studio and client surfaces, a JWT-aware gateway, orchestrated workflow stages, and verification and deployment services. Narrative and scope notes follow internal strategy documents and the live HyperAgent repository.
+            Hyperkit is workflow software for multi-chain smart contract delivery. These docs track the HyperAgent system model from the{' '}
+            <Link href={docHref('/whitepaper')} className="text-indigo-400 hover:text-indigo-300 underline decoration-indigo-500/30 underline-offset-2">
+              Hyperkit whitepaper (v1.2.0)
+            </Link>
+            : Studio and client surfaces, a JWT-aware gateway, orchestrated workflow stages, and verification and deployment services. Narrative and scope notes follow internal strategy documents and the live HyperAgent repository.
           </p>
 
           <h2
