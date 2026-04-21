@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
 import { DocsMermaid } from '@/components/pages/docs-mermaid';
+import { WhitepaperEvidenceRadarChart } from '@/components/pages/whitepaper-evidence-radar-chart';
 import { WhitepaperMarketSizingChart } from '@/components/pages/whitepaper-market-sizing-chart';
 import { slugifyWhitepaperHeading } from '@/lib/whitepaper-markdown-transform';
 
@@ -39,6 +40,9 @@ export function WhitepaperMarkdown({ markdown }: WhitepaperMarkdownProps) {
         const cls = String((children.props as { className?: string }).className ?? '');
         if (cls.includes('language-whitepaper-market-sizing')) {
           return <WhitepaperMarketSizingChart />;
+        }
+        if (cls.includes('language-whitepaper-radar-evidence-status')) {
+          return <WhitepaperEvidenceRadarChart />;
         }
         if (cls.includes('language-mermaid')) {
           const chart = getPlainText(
